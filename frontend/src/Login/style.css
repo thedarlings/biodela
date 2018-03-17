@@ -1,0 +1,18 @@
+body {
+  background-color: rgb(128, 0, 0);
+}
+
+.container {
+  border: 1px solid black;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+
+  background-color: rgb(192, 64, 0);
+  padding: 10px;
+  box-shadow: 4px 4px 40px;
+}
+
+.container input {
+  margin-bottom: 5px;
+}
