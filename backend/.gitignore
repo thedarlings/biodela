@@ -1,2 +1,10 @@
 .gradle
 build
+
+# IntelliJ files
+.idea/
+*.ipr
+*.iml
+*.iws
+out/
+.idea_modules/
