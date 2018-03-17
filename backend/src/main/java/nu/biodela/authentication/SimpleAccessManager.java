@@ -60,7 +60,7 @@ public class SimpleAccessManager implements AccessManager, Service {
       if (authenticateUser(user)) {
         String sessionId = sessions.createSession(user);
         context.status(200)
-            .result("{\""+ AUTH_TOKEN_PARAM_NAME + "\":\"" + sessionId + "\"}");
+            .result("\"{\""+ AUTH_TOKEN_PARAM_NAME + "\":\"" + sessionId + "\"}\"");
       } else {
         context.status(403)
             .result(gson.toJson("Unauthorized!"));
