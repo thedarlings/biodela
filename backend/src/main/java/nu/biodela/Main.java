@@ -20,6 +20,7 @@ public class Main {
 
   private void startServerAndWait() {
     javalinServer.start();
+    javalinServer.error(404, ctx -> ctx.redirect("https://http.cat/404"));
     javalinServer.routes(() ->
       path(prefix, () -> {
         for (Service service : services) {
