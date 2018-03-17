@@ -2,7 +2,7 @@ package nu.biodela.user;
 
 import java.util.List;
 
-public interface UserDAO {
+public interface UserDao {
 
   List<User> findAll();
   List<User> findById();
