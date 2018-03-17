@@ -1,2 +1,3 @@
-rootProject.name = 'biodela-core'
+rootProject.name = 'biodela'
+include 'backend'
 
