@@ -9,7 +9,7 @@ import nu.biodela.authentication.AuthModule;
 @Component(modules = {
     ServerModule.class,
     UserModule.class,
-    AuthModule.class
+    AuthModule.class,
 })
 public interface BioDelarComponent {
   Main getApp();

@@ -9,26 +9,24 @@ import io.javalin.Context;
 import io.javalin.Handler;
 import io.javalin.security.AccessManager;
 import io.javalin.security.Role;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import nu.biodela.Service;
+import nu.biodela.authentication.session.SessionStore;
 import nu.biodela.user.User;
 
 @Singleton
 public class SimpleAccessManager implements AccessManager, Service {
-  public static final String AUTH_TOKEN_PARAM_NAME = "SessionToken";
-  private final Map<String, User> sessions;
+  private static final String AUTH_TOKEN_PARAM_NAME = "SessionToken";
+  private final SessionStore sessions;
   private final Gson gson;
 
   @Inject
-  public SimpleAccessManager(Gson gson) {
+  public SimpleAccessManager(SessionStore sessions, Gson gson) {
+    this.sessions = sessions;
     this.gson = gson;
-    sessions = new HashMap<>();
   }
 
   @Override
@@ -43,7 +41,7 @@ public class SimpleAccessManager implements AccessManager, Service {
 
   private Optional<User> getAuthenticatedUser(Context ctx) {
     return Optional.ofNullable(ctx.queryParam(AUTH_TOKEN_PARAM_NAME))
-        .map(sessions::get);
+        .flatMap(sessions::getActiveUser);
   }
 
   private boolean authenticateUser(User user) {
@@ -60,8 +58,7 @@ public class SimpleAccessManager implements AccessManager, Service {
     try {
       User user = gson.fromJson(context.body(), User.class);
       if (authenticateUser(user)) {
-        String sessionId = UUID.randomUUID().toString();
-        sessions.put(sessionId, user);
+        String sessionId = sessions.createSession(user);
         context.status(200)
             .result("{\""+ AUTH_TOKEN_PARAM_NAME + ":\"" + sessionId + "\"}");
       } else {

@@ -8,6 +8,7 @@ import io.javalin.Javalin;
 import io.javalin.security.AccessManager;
 import java.util.Set;
 import javax.inject.Inject;
+import nu.biodela.authentication.AuthModule;
 import nu.biodela.authentication.SimpleAccessManager;
 
 public class Main {
@@ -46,8 +47,10 @@ public class Main {
         "api",
         "public/",
         8080);
+    AuthModule authModule = new AuthModule(14);
     Main app = DaggerBioDelarComponent.builder()
         .serverModule(serverModule)
+        .authModule(authModule)
         .build()
         .getApp();
     app.startServerAndWait();
