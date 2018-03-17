@@ -5,6 +5,11 @@ plugins {
     id 'java-library'
     id 'maven'
     id 'application'
+    id 'wrapper'
+}
+
+wrapper {
+    gradleVersion = "4.6"
 }
 
 group 'nu.biodela'
