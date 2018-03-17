@@ -10,6 +10,8 @@ import dagger.multibindings.IntoSet;
 import io.javalin.Javalin;
 import javax.inject.Singleton;
 import nu.biodela.authentication.ApiRole;
+import org.slf4j.ILoggerFactory;
+import org.slf4j.LoggerFactory;
 
 @Module
 public class ServerModule {
@@ -48,5 +50,9 @@ public class ServerModule {
     return new Gson();
   }
 
+  @Provides
+  ILoggerFactory provideLoggerFactory() {
+    return LoggerFactory.getILoggerFactory();
+  }
 
 }

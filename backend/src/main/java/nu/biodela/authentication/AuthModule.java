@@ -8,7 +8,6 @@ import javax.inject.Singleton;
 import nu.biodela.Service;
 import nu.biodela.authentication.session.InMemorySessionStoreFactory;
 import nu.biodela.authentication.session.SessionStore;
-import nu.biodela.time.TimeProvider;
 
 @Module
 public class AuthModule {

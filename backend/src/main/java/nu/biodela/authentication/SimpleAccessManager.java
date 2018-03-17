@@ -16,17 +16,21 @@ import javax.inject.Singleton;
 import nu.biodela.Service;
 import nu.biodela.authentication.session.SessionStore;
 import nu.biodela.user.User;
+import org.slf4j.ILoggerFactory;
+import org.slf4j.Logger;
 
 @Singleton
 public class SimpleAccessManager implements AccessManager, Service {
   private static final String AUTH_TOKEN_PARAM_NAME = "SessionToken";
   private final SessionStore sessions;
   private final Gson gson;
+  private final Logger logger;
 
   @Inject
-  public SimpleAccessManager(SessionStore sessions, Gson gson) {
+  public SimpleAccessManager(SessionStore sessions, Gson gson, ILoggerFactory loggerFactory) {
     this.sessions = sessions;
     this.gson = gson;
+    this.logger = loggerFactory.getLogger(SimpleAccessManager.class.getName());
   }
 
   @Override
@@ -58,14 +62,17 @@ public class SimpleAccessManager implements AccessManager, Service {
     try {
       User user = gson.fromJson(context.body(), User.class);
       if (authenticateUser(user)) {
+        logger.info("Logging in " + user.getUsername());
         String sessionId = sessions.createSession(user);
         context.status(200)
             .result("\"{\""+ AUTH_TOKEN_PARAM_NAME + "\":\"" + sessionId + "\"}\"");
       } else {
+        logger.info("Got unauthorized login attempt");
         context.status(403)
             .result(gson.toJson("Unauthorized!"));
       }
     } catch (JsonSyntaxException e) {
+      logger.info("Got json syntax error");
       context
           .status(400)
           .result(gson.toJson("Json syntax error: " + e.getLocalizedMessage()));
