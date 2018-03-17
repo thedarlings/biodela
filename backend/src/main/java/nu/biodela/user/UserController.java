@@ -1,7 +1,5 @@
 package nu.biodela.user;
 
-
-
 import com.google.gson.Gson;
 import io.javalin.Context;
 import java.util.ArrayList;
@@ -28,8 +26,8 @@ public class UserController {
 
   public void getAllUsers(Context context) {
     context.status(200);
-    context.result("HEJ USER");
-
+    String json = gson.toJson(allUsers);
+    context.result(json);
   }
 
   public void createUser(Context context) {
