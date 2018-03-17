@@ -1,7 +1,10 @@
 package nu.biodela;
 
+import io.javalin.Javalin;
+
 public class Main {
   public static void main(String[] args) {
-    Javalin
+    Javalin app = Javalin.start(8080);
+    app.get("/", ctx -> ctx.result("Hello world!"));
   }
 }
