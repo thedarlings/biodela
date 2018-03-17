@@ -1,12 +1,15 @@
 package nu.biodela;
 
 import static io.javalin.ApiBuilder.get;
+import static io.javalin.security.Role.roles;
 
+import com.google.gson.Gson;
 import dagger.Module;
 import dagger.Provides;
 import dagger.multibindings.IntoSet;
 import io.javalin.Javalin;
-import java.util.Set;
+import javax.inject.Singleton;
+import nu.biodela.authentication.ApiRole;
 
 @Module
 public class ServerModule {
@@ -23,12 +26,12 @@ public class ServerModule {
   @IntoSet
   @Provides
   Service provideEmptyService() {
-    return () -> get(ctx -> ctx.result("Hello!"));
+    return () -> get(ctx -> ctx.result("Hello!"), roles(ApiRole.USER));
   }
 
   @Provides
-  Main providesMain(Set<Service> services, Javalin javalin) {
-    return new Main(services, prefix, javalin);
+  Main providesMain(MainFactory factory) {
+    return factory.create(prefix);
   }
 
   @Provides
@@ -37,6 +40,12 @@ public class ServerModule {
         .enableStaticFiles(staticFilePath)
         .enableStandardRequestLogging()
         .port(port);
+  }
+
+  @Singleton
+  @Provides
+  Gson providesGson() {
+    return new Gson();
   }
 
 

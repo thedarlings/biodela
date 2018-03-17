@@ -14,7 +14,4 @@ public class UserModule {
   Service providesUserService(UserService impl) {
     return impl;
   };
-
-  @Provides
-  Gson providesGson(){ return new Gson();}
 }

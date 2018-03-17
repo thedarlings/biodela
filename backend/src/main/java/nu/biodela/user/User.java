@@ -9,7 +9,7 @@ public class User {
   private String password;
   private String email;
 
-  User(String username, String password, String email) {
+  public User(String username, String password, String email) {
     this.id = UUID.randomUUID();
     this.username = username;
     this.password = password;
