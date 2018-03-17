@@ -8,6 +8,7 @@ import io.javalin.Javalin;
 import io.javalin.security.AccessManager;
 import java.util.Set;
 import nu.biodela.authentication.AuthModule;
+import nu.biodela.db.DbModule;
 
 public class Main {
   private final String prefix;
@@ -41,6 +42,9 @@ public class Main {
   }
 
   public static void main(String[] args) {
+
+    DbModule dbModule = new DbModule("postgresql", "192.168.0.9", "5432", "biodela");
+
     ServerModule serverModule = new ServerModule(
         "api",
         "public/",
@@ -49,6 +53,7 @@ public class Main {
     Main app = DaggerBioDelarComponent.builder()
         .serverModule(serverModule)
         .authModule(authModule)
+        .dbModule(dbModule)
         .build()
         .getApp();
     app.startServerAndWait();

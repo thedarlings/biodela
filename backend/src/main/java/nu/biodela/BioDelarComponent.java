@@ -1,6 +1,7 @@
 package nu.biodela;
 
 import dagger.Component;
+import nu.biodela.db.DbModule;
 import nu.biodela.user.UserModule;
 import javax.inject.Singleton;
 import nu.biodela.authentication.AuthModule;
@@ -10,6 +11,7 @@ import nu.biodela.authentication.AuthModule;
     ServerModule.class,
     UserModule.class,
     AuthModule.class,
+    DbModule.class
 })
 public interface BioDelarComponent {
   Main getApp();

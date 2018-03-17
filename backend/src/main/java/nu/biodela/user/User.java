@@ -1,17 +1,22 @@
 package nu.biodela.user;
 
 import java.util.Objects;
-import java.util.UUID;
 
 public class User {
 
-  private UUID id;
+  private long id;
   private String username;
   private String password;
   private String email;
 
   public User(String username, String password, String email) {
-    this.id = UUID.randomUUID();
+    this.username = username;
+    this.password = password;
+    this.email = email;
+  }
+
+  public User(long id, String username, String password, String email) {
+    this.id = id;
     this.username = username;
     this.password = password;
     this.email = email;
@@ -33,11 +38,11 @@ public class User {
     this.password = password;
   }
 
-  public UUID getId() {
+  public long getId() {
     return id;
   }
 
-  public void setId(UUID id) {
+  public void setId(long id) {
     this.id = id;
   }
 

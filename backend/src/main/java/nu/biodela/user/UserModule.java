@@ -1,7 +1,5 @@
 package nu.biodela.user;
 
-import com.google.gson.Gson;
-
 import dagger.Module;
 import dagger.Provides;
 import dagger.multibindings.IntoSet;
