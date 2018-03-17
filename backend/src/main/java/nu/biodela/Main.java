@@ -7,9 +7,7 @@ import com.google.auto.factory.Provided;
 import io.javalin.Javalin;
 import io.javalin.security.AccessManager;
 import java.util.Set;
-import javax.inject.Inject;
 import nu.biodela.authentication.AuthModule;
-import nu.biodela.authentication.SimpleAccessManager;
 
 public class Main {
   private final String prefix;
@@ -35,11 +33,11 @@ public class Main {
         .error(404, ctx -> ctx.redirect("https://http.cat/404"))
         .start();
     javalinServer.routes(() ->
-      path(prefix, () -> {
-        for (Service service : services) {
-          service.setUpRoutes();
-        }
-      }));
+        path(prefix, () -> {
+          for (Service service : services) {
+            service.setUpRoutes();
+          }
+        }));
   }
 
   public static void main(String[] args) {
