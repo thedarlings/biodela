@@ -23,7 +23,7 @@ public class ServerModule {
   @IntoSet
   @Provides
   Service provideEmptyService() {
-    return app -> get(ctx -> ctx.result("Hello!"));
+    return () -> get(ctx -> ctx.result("Hello!"));
   }
 
   @Provides

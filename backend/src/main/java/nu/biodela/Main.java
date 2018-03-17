@@ -23,7 +23,7 @@ public class Main {
     javalinServer.routes(() ->
       path(prefix, () -> {
         for (Service service : services) {
-          service.setUpRoutes(javalinServer);
+          service.setUpRoutes();
         }
       }));
   }
