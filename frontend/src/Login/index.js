@@ -5,6 +5,15 @@ class Login extends Component {
   constructor(props) {
     super(props);
     this.state = { username: "", password: "" };
+    fetch('http://localhost:8080/api/auth', {
+      body: JSON.stringify({username: "hej", password: "lol"}),
+      method: 'POST',
+      mode: 'no-cors',
+      headers: new Headers({
+        'Content-Type': 'application/json'
+      })
+    })
+      .then(response => console.log(response))
   }
 
   render() {

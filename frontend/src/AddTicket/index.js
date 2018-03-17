@@ -4,7 +4,7 @@ import './style.css';
 class AddTicket extends Component {
   render() {
     return (
-      <div class="centering">
+      <div className="centering">
         <div>
           <p>Skicka din biljett till Etern!</p>
           <input type="text" placeholder="xxxxxxxxxx" />

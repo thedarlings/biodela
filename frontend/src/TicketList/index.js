@@ -9,11 +9,11 @@ class TicketList extends Component {
 
   render() {
     return (
-      <div class="horizontalCentering">
+      <div className="horizontalCentering">
         <div>
           <ul>
             {this.state.tickets.map(ticket => {
-              return <li>{ticket.code}</li>
+              return <li key={ticket.code}>{ticket.code}</li>
             })}
           </ul>
         </div>
