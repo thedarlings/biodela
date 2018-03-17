@@ -1,42 +1,42 @@
 package nu.biodela;
 
-import io.javalin.ApiBuilder;
+import static io.javalin.ApiBuilder.path;
+
 import io.javalin.Javalin;
-import java.util.List;
+import java.util.Set;
 import javax.inject.Inject;
 
 public class Main {
-
-  private final int port;
-  private final String staticFilePath;
   private final String prefix;
-  private final List<Service> services;
+  private final Set<Service> services;
+  private final Javalin javalinServer;
 
   @Inject
-  public Main(int port, String staticFilePath, String prefix, List<Service> services) {
-    this.port = port;
-    this.staticFilePath = staticFilePath;
+  Main(Set<Service> services, String prefix, Javalin javalinServer) {
     this.prefix = prefix;
     this.services = services;
+    this.javalinServer = javalinServer;
   }
 
   private void startServerAndWait() {
-    Javalin app = Javalin.create()
-        .enableStaticFiles(staticFilePath)
-        .enableStandardRequestLogging()
-        .port(port)
-        .start();
-
-    app.routes(() ->
-      ApiBuilder.path(prefix, () -> {
+    javalinServer.start();
+    javalinServer.routes(() ->
+      path(prefix, () -> {
         for (Service service : services) {
-          service.setUpRoutes(app);
+          service.setUpRoutes(javalinServer);
         }
       }));
   }
 
   public static void main(String[] args) {
-    Main app = DaggerBioDelarComponent.create().getApp();
+    ServerModule serverModule = new ServerModule(
+        "api",
+        "public/",
+        8080);
+    Main app = DaggerBioDelarComponent.builder()
+        .serverModule(serverModule)
+        .build()
+        .getApp();
     app.startServerAndWait();
   }
 }
