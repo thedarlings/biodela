@@ -30,7 +30,7 @@ class PasswordAuthenticator {
   /**
    * The minimum recommended cost, used by default
    */
-  private static final int DEFAULT_COST = 32;
+  private static final int DEFAULT_COST = 16;
 
   private static final String ALGORITHM = "PBKDF2WithHmacSHA1";
 
