@@ -4,18 +4,27 @@ import './style.css';
 class TicketList extends Component {
   constructor(props) {
     super(props);
-    this.state = { tickets: [{code: "0987654321", date: "27/4-19"}, {code: "1234567890", date: "27/4-29"}] }
+    this.state = { tickets: [] }
+  }
+
+  componentWillMount() {
+    this.setState({ tickets: this.props.tickets });
   }
 
   render() {
     return (
       <div className="horizontalCentering">
         <div>
-          <ul>
-            {this.state.tickets.map(ticket => {
-              return <li key={ticket.code}>{ticket.code}</li>
-            })}
-          </ul>
+          <table>
+            <tbody>
+              {this.props.tickets.map(ticket => {
+                return <tr key={ticket.code}>
+                  <td>{ticket.code}</td>
+                  <td>{ticket.expiryDate}</td>
+                </tr>
+              })}
+            </tbody>
+          </table>
         </div>
       </div>
     )

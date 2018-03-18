@@ -14,7 +14,7 @@ class Login extends Component {
       method: 'POST',
       mode: 'cors',
       headers: new Headers({
-        'Content-Type': 'text/plain'
+        'Content-Type': 'application/json'
       })
     })
     .then(response => {
