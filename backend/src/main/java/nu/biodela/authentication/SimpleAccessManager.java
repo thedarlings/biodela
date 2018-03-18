@@ -82,7 +82,7 @@ public class SimpleAccessManager implements AccessManager, Service {
             .result(gson.toJson(new SessionResult(sessionId, user.getId())));
       } else {
         logger.info("Got unauthorized login attempt");
-        context.status(403)
+        context.status(401)
             .contentType("application/json")
             .result(gson.toJson("Unauthorized!"));
       }
