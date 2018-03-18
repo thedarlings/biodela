@@ -77,7 +77,7 @@ public class SqlTicketDao implements TicketDao {
     while (rs.next()) {
 
       long id = rs.getInt(TICKET_ID);
-      long code = rs.getInt(CODE);
+      String code = rs.getString(CODE);
       Date expireDate = rs.getDate(EXPIRY_DATE);
       Date entryDate = rs.getDate(CREATED_AT);
       String provider = rs.getString(PROVIDER);
