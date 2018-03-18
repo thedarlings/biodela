@@ -5,6 +5,7 @@ import static io.javalin.ApiBuilder.path;
 import static io.javalin.ApiBuilder.post;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import io.javalin.Context;
 import io.javalin.security.Role;
 import java.util.Collections;
@@ -14,17 +15,21 @@ import javax.inject.Inject;
 import nu.biodela.Service;
 import nu.biodela.authentication.ApiRole;
 import nu.biodela.authentication.session.SessionStore;
+import org.slf4j.ILoggerFactory;
+import org.slf4j.Logger;
 
 public class TicketService implements Service {
   private final TicketDao dao;
   private final SessionStore sessionStore;
   private final Gson gson;
+  private Logger logger;
 
   @Inject
-  TicketService(TicketDao dao, SessionStore sessionStore, Gson gson) {
+  TicketService(TicketDao dao, SessionStore sessionStore, Gson gson, ILoggerFactory loggerFactory) {
     this.dao = dao;
     this.sessionStore = sessionStore;
     this.gson = gson;
+    this.logger = loggerFactory.getLogger(TicketService.class.getName());
   }
 
   @Override
@@ -53,8 +58,18 @@ public class TicketService implements Service {
   }
 
   private void addTicket(Context context) {
-    final Optional<Long> userId = sessionStore.getActiveUser(context);
-
+    Optional<Long> userId = sessionStore.getActiveUser(context);
+    try {
+      Ticket ticket = gson.fromJson(context.body(), Ticket.class);
+      userId.ifPresent(id -> {
+        ticket.setProvider(id);
+        dao.insert(ticket);
+        context.status(200);
+      });
+    } catch (JsonSyntaxException e) {
+      logger.info("Malformed json: " + e.getLocalizedMessage());
+      context.status(400);
+    }
   }
 
   private void getAllTickets(Context context) {

@@ -82,6 +82,8 @@ public class SqlTicketDao implements TicketDao {
       sql += ", " + ticket.getOwnerId().get();
     }
 
+    sql += ")";
+
     return updateTickets(sql);
   }
 
