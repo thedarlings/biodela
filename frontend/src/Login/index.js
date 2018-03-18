@@ -4,7 +4,7 @@ import './style.css';
 class Login extends Component {
   constructor(props) {
     super(props);
-    this.state = { username: "", password: "" };
+    this.state = { username: "", password: "", loginFailed: false };
     
   }
 
@@ -16,13 +16,21 @@ class Login extends Component {
       headers: new Headers({
         'Content-Type': 'text/plain'
       })
-    }).then(response => {
-      console.log(response)
-      return response.json();
-    }).then(data => {
-      console.log({data})
-      localStorage.setItem("sessiontoken", data.sessiontoken);
-      this.props.authenticate();
+    })
+    .then(response => {
+      if (response.status === 200){
+        response.json().then(data => {
+          localStorage.setItem("sessiontoken", data.sessiontoken);
+          this.props.authenticate();
+        })
+      } else if (response.status === 401){
+        this.setState({ loginFailed: true });
+        localStorage.clear("sessiontoken");
+      }
+      return response;
+    }).catch(error => {
+      console.log("Fel fel fel fel fel fel!")
+      console.log(error.message)
     })
   }
 
@@ -47,6 +55,7 @@ class Login extends Component {
           >
             Logga in
           </button>
+          {this.state.loginFailed && <div>Fel vid inloggning</div>}
         </div>
       </div>
     )
