@@ -5,15 +5,25 @@ class Login extends Component {
   constructor(props) {
     super(props);
     this.state = { username: "", password: "" };
-    fetch('http://localhost:8080/api/auth', {
-      body: JSON.stringify({username: "hej", password: "lol"}),
+    
+  }
+
+  login() {
+    fetch('http://192.168.0.9:8080/api/auth', {
+      body: JSON.stringify({ username: this.state.username, password: this.state.password }),
       method: 'POST',
-      mode: 'no-cors',
+      mode: 'cors',
       headers: new Headers({
-        'Content-Type': 'application/json'
+        'Content-Type': 'text/plain'
       })
+    }).then(response => {
+      console.log(response)
+      return response.json();
+    }).then(data => {
+      console.log({data})
+      localStorage.setItem("sessiontoken", data.sessiontoken);
+      this.props.authenticate();
     })
-      .then(response => console.log(response))
   }
 
   render() {
@@ -33,7 +43,7 @@ class Login extends Component {
           />
           <button
             disabled={this.state.username.length < 2 || this.state.password.length < 2}
-            onClick={() => console.log(this.state.username.length )}
+            onClick={() => this.login()}
           >
             Logga in
           </button>

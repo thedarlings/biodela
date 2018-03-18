@@ -8,6 +8,12 @@ class Main extends Component {
   render() {
     return (
       <div className="grid">
+        <button
+          onClick={() => this.props.logout()}
+          className="logout"
+        >
+          Logga ut
+        </button>
         <div className="box add_ticket">
           <AddTicket />
         </div>

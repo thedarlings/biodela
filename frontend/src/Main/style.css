@@ -25,3 +25,9 @@
   grid-column-end: 3;
   grid-row-start: 2;
 }
+
+.logout {
+  position: absolute;
+  left: 20px;
+  top: 20px;
+}
