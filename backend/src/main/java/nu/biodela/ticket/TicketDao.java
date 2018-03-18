@@ -4,6 +4,7 @@ import java.util.List;
 
 public interface TicketDao {
   List<Ticket> getAllTickets(long ownerId);
-  Ticket getTicket(long id);
-  boolean insertTicket(Ticket ticket);
+  List<Ticket> getAllTickets();
+  boolean update(Ticket ticket);
+  boolean insert(Ticket ticket);
 }

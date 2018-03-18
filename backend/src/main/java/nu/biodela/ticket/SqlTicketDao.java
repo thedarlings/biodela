@@ -25,7 +25,7 @@ public class SqlTicketDao implements TicketDao {
   private final Logger logger;
 
   @Inject
-  public SqlTicketDao(DbService dbService) {
+  SqlTicketDao(DbService dbService) {
     this.dbService = dbService;
     this.logger = LoggerFactory.getLogger(SqlTicketDao.class);
   }
@@ -39,12 +39,17 @@ public class SqlTicketDao implements TicketDao {
   }
 
   @Override
-  public Ticket getTicket(long id) {
+  public List<Ticket> getAllTickets() {
     return null;
   }
 
   @Override
-  public boolean insertTicket(Ticket ticket) {
+  public boolean update(Ticket ticket) {
+    return false;
+  }
+
+  @Override
+  public boolean insert(Ticket ticket) {
     return false;
   }
 

@@ -21,7 +21,7 @@ public class TicketService implements Service {
   private final Gson gson;
 
   @Inject
-  public TicketService(TicketDao dao, SessionStore sessionStore, Gson gson) {
+  TicketService(TicketDao dao, SessionStore sessionStore, Gson gson) {
     this.dao = dao;
     this.sessionStore = sessionStore;
     this.gson = gson;
