@@ -56,7 +56,34 @@ public class SqlTicketDao implements TicketDao {
     }
 
     sql += " WHERE " + TICKET_ID + "=" + ticket.getTicketId();
+    return updateTickets(sql);
 
+  }
+
+  @Override
+  public boolean insert(Ticket ticket) {
+    String sql = "INSERT into tickets (" +
+        PROVIDER + ", " +
+        CODE + ", " +
+        EXPIRY_DATE;
+    if (ticket.getOwnerId().isPresent()) {
+      sql += ", " + OWNER_ID ;
+    }
+
+    sql += ") " +
+        " VALUES(" +
+        ticket.getProvider() + ", " +
+        "\'" + ticket.getCode() + "\', " +
+        "\'" + ticket.getExpiryDate() + "\'";
+
+    if (ticket.getOwnerId().isPresent()) {
+      sql += ", " + ticket.getOwnerId().get();
+    }
+
+    return updateTickets(sql);
+  }
+
+  private boolean updateTickets(String sql) {
     try (Connection dbConnection = dbService.connect();
         Statement statement = dbConnection.createStatement()) {
       logger.info("Running SQL query: " + sql);
@@ -66,12 +93,6 @@ public class SqlTicketDao implements TicketDao {
       logger.error(e.getMessage(), e);
       return false;
     }
-
-  }
-
-  @Override
-  public boolean insert(Ticket ticket) {
-    return false;
   }
 
   private List<Ticket> getTickets(String query) { ;
