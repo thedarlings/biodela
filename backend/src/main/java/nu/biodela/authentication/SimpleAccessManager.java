@@ -55,7 +55,9 @@ public class SimpleAccessManager implements AccessManager, Service {
 
   @Override
   public void setUpRoutes() {
-    path("auth", () -> post(this::onLoginRequest));
+    path("auth", () -> {
+      post(this::onLoginRequest);
+    });
   }
 
   private void onLoginRequest(Context context) {
@@ -67,7 +69,7 @@ public class SimpleAccessManager implements AccessManager, Service {
         context
             .contentType("application/json")
             .status(200)
-            .result("{\""+ AUTH_TOKEN_PARAM_NAME + "\":\"" + sessionId + "\"}");
+            .result(gson.toJson(new SessionResult(sessionId, user.getId())));
       } else {
         logger.info("Got unauthorized login attempt");
         context.status(403)
@@ -80,6 +82,15 @@ public class SimpleAccessManager implements AccessManager, Service {
           .status(400)
           .contentType("application/json")
           .result(gson.toJson("Json syntax error: " + e.getLocalizedMessage()));
+    }
+  }
+
+  private static class SessionResult {
+    private String SessionToken;
+    private long id;
+    private SessionResult(String sessionToken, long id) {
+      SessionToken = sessionToken;
+      this.id = id;
     }
   }
 }

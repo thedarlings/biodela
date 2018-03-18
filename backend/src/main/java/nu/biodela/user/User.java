@@ -70,4 +70,8 @@ public class User {
 
     return Objects.hash(id, username, password, email);
   }
+
+  public void dropPassword() {
+    this.password = null;
+  }
 }

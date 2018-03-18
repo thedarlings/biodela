@@ -12,7 +12,6 @@ import javax.inject.Singleton;
 import nu.biodela.time.TimeProvider;
 import nu.biodela.user.User;
 
-@Singleton
 public class InMemorySessionStore implements SessionStore {
 
   private final TimeProvider time;

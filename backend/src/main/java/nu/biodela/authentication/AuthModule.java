@@ -7,6 +7,7 @@ import io.javalin.security.AccessManager;
 import javax.inject.Singleton;
 import nu.biodela.Service;
 import nu.biodela.authentication.session.InMemorySessionStoreFactory;
+import nu.biodela.authentication.session.SessionService;
 import nu.biodela.authentication.session.SessionStore;
 
 @Module
@@ -30,7 +31,15 @@ public class AuthModule {
     return impl;
   }
 
+  @Singleton
   @Provides
+  @IntoSet
+  Service provideSessionService(SessionService impl) {
+    return impl;
+  }
+
+  @Provides
+  @Singleton
   SessionStore providesSessionStore(InMemorySessionStoreFactory factory) {
     return factory.create(sessionSurvivalTimeInDays);
   }
