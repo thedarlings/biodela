@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import javax.inject.Inject;
@@ -32,21 +33,38 @@ public class SqlTicketDao implements TicketDao {
 
   @Override
   public List<Ticket> getAllTickets(long ownerId) {
-
-    String selectTableSQL = "SELECT * FROM tickets WHERE " + OWNER_ID + "='" + ownerId + "'";
-
-    return sqlQueryForTickets(selectTableSQL);
+    String sql = "SELECT * FROM tickets WHERE " + OWNER_ID + "='" + ownerId + "'";
+    return getTickets(sql);
   }
 
 
   @Override
   public List<Ticket> getAllTickets() {
-    return null;
+    String sql = "SELECT * FROM tickets";
+    return getTickets(sql);
   }
 
   @Override
   public boolean update(Ticket ticket) {
-    return false;
+
+    String sql = "UPDATE tickets SET " +
+        TICKET_ID + "=" + ticket.getTicketId() +
+        CODE + "=" + ticket.getCode() +
+        EXPIRY_DATE + "=" + ticket.getExpiryDate() +
+        CREATED_AT + "=" + ticket.getCreatedAt() +
+        PROVIDER + "=" + ticket.getProvider() +
+        OWNER_ID + "=" + ticket.getOwnerId();
+
+
+    try (Connection dbConnection = dbService.connect();
+        Statement statement = dbConnection.createStatement()) {
+      statement.executeUpdate(sql);
+      return true;
+    } catch (SQLException e) {
+      logger.error(e.getMessage(), e);
+      return false;
+    }
+
   }
 
   @Override
@@ -54,27 +72,20 @@ public class SqlTicketDao implements TicketDao {
     return false;
   }
 
-  private List<Ticket> sqlQueryForTickets(String selectTableSQL) {
-    Connection dbConnection = null;
-    Statement statement = null;
-
-    try {
-      dbConnection = dbService.connect();
-      statement = dbConnection.createStatement();
-      logger.debug("SQL QUERY: " + selectTableSQL);
+  private List<Ticket> getTickets(String query) { ;
+    try (Connection dbConnection = dbService.connect();
+    Statement statement = dbConnection.createStatement()){
+      logger.debug("SQL QUERY: " + query);
 
       // execute select SQL stetement
-      try (ResultSet rs = statement.executeQuery(selectTableSQL)) {
+      try (ResultSet rs = statement.executeQuery(query)) {
         return ticketResultSetToList(rs);
       }
 
     } catch (SQLException e) {
       logger.error(e.getMessage(), e);
-      throw new RuntimeException(e);
+      return Collections.emptyList();
 
-    } finally {
-      closeStatement(statement);
-      closeDbConnection(dbConnection);
     }
   }
 
@@ -96,23 +107,4 @@ public class SqlTicketDao implements TicketDao {
     return tickets;
   }
 
-  private void closeDbConnection(Connection dbConnection) {
-    if (dbConnection != null) {
-      try {
-        dbConnection.close();
-      } catch (SQLException e) {
-        logger.error(e.getMessage(), e);
-      }
-    }
-  }
-
-  private void closeStatement(Statement statement) {
-    if (statement != null) {
-      try {
-        statement.close();
-      } catch (SQLException e) {
-        logger.error(e.getMessage(), e);
-      }
-    }
-  }
 }

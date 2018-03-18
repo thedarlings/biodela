@@ -49,4 +49,56 @@ public class Ticket {
   public void setOwner(Long owner) {
     this.ownerId = owner;
   }
+
+  public long getTicketId() {
+    return ticketId;
+  }
+
+  public void setTicketId(long ticketId) {
+    this.ticketId = ticketId;
+  }
+
+  public String getCode() {
+    return code;
+  }
+
+  public void setCode(String code) {
+    this.code = code;
+  }
+
+  public Date getExpiryDate() {
+    return expiryDate;
+  }
+
+  public void setExpiryDate(Date expiryDate) {
+    this.expiryDate = expiryDate;
+  }
+
+  public Date getCreatedAt() {
+    return createdAt;
+  }
+
+  public void setCreatedAt(Date createdAt) {
+    this.createdAt = createdAt;
+  }
+
+  public Long getProvider() {
+    return provider;
+  }
+
+  public void setProvider(Long provider) {
+    this.provider = provider;
+  }
+
+  public void setOwnerId(Long ownerId) {
+    this.ownerId = ownerId;
+  }
+
+  public boolean isUsed() {
+    return used;
+  }
+
+  public void setUsed(boolean used) {
+    this.used = used;
+  }
 }

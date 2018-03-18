@@ -30,15 +30,15 @@ public class SqlUserDao implements UserDao {
 
   @Override
   public List<User> findAll() {
-    String selectTableSQL = "SELECT * from users";
-    return getUsers(selectTableSQL);
+    String sql = "SELECT * from users";
+    return getUsers(sql);
   }
 
   @Override
   public Optional<User> findById(long id) {
 
-    String selectTableSQL = String.format("SELECT * from users WHERE %s=%s", USER_ID, id);
-    List<User> users = getUsers(selectTableSQL);
+    String sql = String.format("SELECT * from users WHERE %s=%s", USER_ID, id);
+    List<User> users = getUsers(sql);
     if (users.isEmpty()) {
       return Optional.empty();
     } else {
@@ -48,8 +48,8 @@ public class SqlUserDao implements UserDao {
 
   @Override
   public Optional<User> findByUsername(String username) {
-    String selectTableSQL = String.format("SELECT * from users WHERE %s='%s'", USERNAME, username);
-    List<User> users = getUsers(selectTableSQL);
+    String sql = String.format("SELECT * from users WHERE %s='%s'", USERNAME, username);
+    List<User> users = getUsers(sql);
     if (users.isEmpty()) {
       return Optional.empty();
     } else {
