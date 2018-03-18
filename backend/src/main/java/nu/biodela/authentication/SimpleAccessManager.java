@@ -16,6 +16,7 @@ import javax.inject.Singleton;
 import nu.biodela.Service;
 import nu.biodela.authentication.session.SessionStore;
 import nu.biodela.user.User;
+import nu.biodela.user.UserDao;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 
@@ -23,12 +24,18 @@ import org.slf4j.Logger;
 public class SimpleAccessManager implements AccessManager, Service {
   private static final String AUTH_TOKEN_PARAM_NAME = "sessiontoken";
   private final SessionStore sessions;
+  private final UserDao userDao;
   private final Gson gson;
   private final Logger logger;
 
   @Inject
-  public SimpleAccessManager(SessionStore sessions, Gson gson, ILoggerFactory loggerFactory) {
+  public SimpleAccessManager(
+      SessionStore sessions,
+      UserDao userDao,
+      Gson gson,
+      ILoggerFactory loggerFactory) {
     this.sessions = sessions;
+    this.userDao = userDao;
     this.gson = gson;
     this.logger = loggerFactory.getLogger(SimpleAccessManager.class.getName());
   }
@@ -45,12 +52,13 @@ public class SimpleAccessManager implements AccessManager, Service {
 
   private Optional<User> getAuthenticatedUser(Context ctx) {
     return Optional.ofNullable(ctx.queryParam(AUTH_TOKEN_PARAM_NAME))
-        .flatMap(sessions::getActiveUser);
+        .flatMap(sessions::getActiveUser)
+        .flatMap(userDao::findById);
   }
 
-  private boolean authenticateUser(User user) {
+  private Optional<User> authenticateUser(LoginJson loginCredentials) {
     //TODO: Add authentication
-    return true;
+    return userDao.findByUsername(loginCredentials.username);
   }
 
   @Override
@@ -62,10 +70,12 @@ public class SimpleAccessManager implements AccessManager, Service {
 
   private void onLoginRequest(Context context) {
     try {
-      User user = gson.fromJson(context.body(), User.class);
-      if (authenticateUser(user)) {
+      LoginJson payLoad = gson.fromJson(context.body(), LoginJson.class);
+      Optional<User> authenticatedUser = authenticateUser(payLoad);
+      if (authenticatedUser.isPresent()) {
+        User user = authenticatedUser.get();
         logger.info("Logging in " + user.getUsername());
-        String sessionId = sessions.createSession(user);
+        String sessionId = sessions.createSession(user.getId());
         context
             .contentType("application/json")
             .status(200)
@@ -83,6 +93,11 @@ public class SimpleAccessManager implements AccessManager, Service {
           .contentType("application/json")
           .result(gson.toJson("Json syntax error: " + e.getLocalizedMessage()));
     }
+  }
+
+  private static class LoginJson {
+    private String username;
+    private String password;
   }
 
   private static class SessionResult {

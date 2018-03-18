@@ -8,9 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import javax.inject.Singleton;
 import nu.biodela.time.TimeProvider;
-import nu.biodela.user.User;
 
 public class InMemorySessionStore implements SessionStore {
 
@@ -27,7 +25,7 @@ public class InMemorySessionStore implements SessionStore {
 
 
   @Override
-  public Optional<User> getActiveUser(String sessionToken) {
+  public Optional<Long> getActiveUser(String sessionToken) {
     Session session = sessions.get(sessionToken);
     if (session == null) {
       return Optional.empty();
@@ -35,22 +33,22 @@ public class InMemorySessionStore implements SessionStore {
       sessions.remove(sessionToken);
       return Optional.empty();
     } else {
-      return Optional.of(session.getUser());
+      return Optional.of(session.getUserId());
     }
   }
 
   @Override
-  public Optional<User> getActiveUser(Context context) {
+  public Optional<Long> getActiveUser(Context context) {
     return Optional.ofNullable(context.queryParam("sessiontoken"))
         .flatMap(this::getActiveUser);
   }
 
   @Override
-  public String createSession(User user) {
+  public String createSession(long userId) {
     String sessionId = UUID.randomUUID().toString();
     Session session = new Session(
         sessionId,
-        user,
+        userId,
         time.now().plusNanos(sessionTime * 24 * 60 * 60 * 1_000_000_000));
     sessions.put(sessionId, session);
     return sessionId;
@@ -65,12 +63,12 @@ public class InMemorySessionStore implements SessionStore {
 
   private class Session {
     private final String sessionId;
-    private final User user;
+    private final long userId;
     private final Instant expirationTime;
 
-    Session(String sessionId, User user, Instant expirationTime) {
+    Session(String sessionId, long userId, Instant expirationTime) {
       this.sessionId = sessionId;
-      this.user = user;
+      this.userId = userId;
       this.expirationTime = expirationTime;
     }
 
@@ -78,8 +76,8 @@ public class InMemorySessionStore implements SessionStore {
       return sessionId;
     }
 
-    User getUser() {
-      return user;
+    long getUserId() {
+      return userId;
     }
 
     Instant getExpirationTime() {

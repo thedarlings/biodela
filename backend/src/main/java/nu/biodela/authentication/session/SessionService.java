@@ -10,16 +10,19 @@ import java.util.Optional;
 import javax.inject.Inject;
 import nu.biodela.Service;
 import nu.biodela.user.User;
+import nu.biodela.user.UserDao;
 
 public class SessionService implements Service {
   private static final String SESSION_TOKEN = "sessiontoken";
   private final SessionStore sessionStore;
   private final Gson gson;
+  private final UserDao userDao;
 
   @Inject
-  public SessionService(SessionStore sessionStore, Gson gson) {
+  SessionService(SessionStore sessionStore, Gson gson, UserDao userDao) {
     this.sessionStore = sessionStore;
     this.gson = gson;
+    this.userDao = userDao;
   }
 
   @Override
@@ -42,7 +45,9 @@ public class SessionService implements Service {
 
   private void getSession(Context context) {
     String sessionToken = context.param(SESSION_TOKEN);
-    Optional<User> activeUser = sessionStore.getActiveUser(sessionToken);
+    Optional<User> activeUser = sessionStore
+        .getActiveUser(sessionToken)
+        .flatMap(userDao::findById);
     if (activeUser.isPresent()) {
       User user = activeUser.get();
       user.dropPassword();

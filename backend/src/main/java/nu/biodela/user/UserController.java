@@ -2,37 +2,23 @@ package nu.biodela.user;
 
 import com.google.gson.Gson;
 import io.javalin.Context;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 import javax.inject.Inject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class UserController {
 
   private Gson gson;
-  private final List<User> allUsers;
-  private final SqlUserDao sqlUserDao;
-  private final Logger logger;
+  private final UserDao userDao;
 
   @Inject
-  public UserController(Gson gson, SqlUserDao sqlUserDao) {
+  UserController(Gson gson, UserDao userDao) {
     this.gson = gson;
-    this.sqlUserDao = sqlUserDao;
-    this.logger = LoggerFactory.getLogger(UserController.class.getName());
-    allUsers = new ArrayList<>();
-    init();
-  }
-
-  private void init() {
-    allUsers.add(new User(1, "Rebecca", "helloRebecca", "rebecca.hellstrom@gmail.com"));
-    allUsers.add(new User(2, "David", "helloDavid", "david@nowhere.com"));
+    this.userDao = userDao;
   }
 
   public void getAllUsers(Context context) {
-    final List<User> all = sqlUserDao.findAll();
+    final List<User> all = userDao.findAll();
     String json = gson.toJson(all);
     context.status(200);
     context.result(json);
@@ -42,38 +28,27 @@ public class UserController {
     String body = context.body();
     User user = gson.fromJson(body, User.class);
     user.setId(3);
-    allUsers.add(user);
     context.result("User added");
     context.status(200);
   }
 
   public void getUser(Context context) {
-    List<User> users = null;
-    final String param = context.param("id");
-    if (param != null) {
-      users = sqlUserDao.findById(param);
-    }
-    final Map<String, String> paramMap = context.paramMap();
-    context.result(gson.toJson(users));
+    Optional<User> optUser = Optional.ofNullable(context.param("id"))
+        .map(Long::valueOf)
+        .flatMap(userDao::findById);
 
-    List<String> keys = Arrays.asList("id", "username");
-    for (String key : keys) {
-      if (paramMap.containsKey(key)) {
-        String value = paramMap.get(key);
-        users = (key.equals("id")) ? sqlUserDao.findById(key) : sqlUserDao.findByUsername(key);
-        if (users == null){
-          logger.warn("No users were could be found for " + key + ": " + value);
-          return;
-        }
-        context.result(gson.toJson(users));
-      }
-    }
+    if (optUser.isPresent()) {
+      User user = optUser.get();
+      user.dropPassword();
+      context.status(200)
+          .contentType("application/json")
+          .result(gson.toJson(user));
+    } else {
+      context
+          .status(400)
+          .result("Invalid request syntax: no valid parameter to search for user with");
 
-    if (users == null ) {
-      context.status(400);
-      context.result("Invalid request syntax: no valid parameter to search for user with");
     }
-
   }
 
   public void updateUser(Context context) {

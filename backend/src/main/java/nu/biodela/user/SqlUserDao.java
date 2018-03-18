@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import javax.inject.Inject;
 import nu.biodela.db.DbService;
 import org.slf4j.Logger;
@@ -13,10 +14,10 @@ import org.slf4j.LoggerFactory;
 
 public class SqlUserDao implements UserDao {
 
-  public static final String USER_ID = "USER_ID";
-  public static final String USERNAME = "USER_NAME";
-  public static final String PASSWORD = "PASSWORD";
-  public static final String EMAIL = "EMAIL";
+  private static final String USER_ID = "user_id";
+  private static final String USERNAME = "user_name";
+  private static final String PASSWORD = "password";
+  private static final String EMAIL = "email";
   private DbService dbService;
   private final Logger logger;
 
@@ -29,34 +30,30 @@ public class SqlUserDao implements UserDao {
 
   @Override
   public List<User> findAll() {
-
-    Connection dbConnection = null;
-    Statement statement = null;
-
     String selectTableSQL = "SELECT * from users";
-
-    return getUsers(dbConnection, statement, selectTableSQL);
-
+    return getUsers(selectTableSQL);
   }
 
   @Override
-  public List<User> findById(String id) {
-    Connection dbConnection = null;
-    Statement statement = null;
-
+  public Optional<User> findById(long id) {
     String selectTableSQL = String.format("SELECT * from users WHERE %s=%s", USER_ID, id);
-
-    return getUsers(dbConnection, statement, selectTableSQL);
+    List<User> users = getUsers(selectTableSQL);
+    if (users.isEmpty()) {
+      return Optional.empty();
+    } else {
+      return Optional.ofNullable(users.get(0));
+    }
   }
 
   @Override
-  public List<User> findByUsername(String username) {
-    Connection dbConnection = null;
-    Statement statement = null;
-
-    String selectTableSQL = String.format("SELECT * from users WHERE %s=%s", USERNAME, username);
-
-    return getUsers(dbConnection, statement, selectTableSQL);
+  public Optional<User> findByUsername(String username) {
+    String selectTableSQL = String.format("SELECT * from users WHERE %s='%s'", USERNAME, username);
+    List<User> users = getUsers(selectTableSQL);
+    if (users.isEmpty()) {
+      return Optional.empty();
+    } else {
+      return Optional.ofNullable(users.get(0));
+    }
   }
 
   @Override
@@ -74,12 +71,10 @@ public class SqlUserDao implements UserDao {
     return false;
   }
 
-  private List<User> getUsers(Connection dbConnection, Statement statement, String selectTableSQL) {
-    try {
-      dbConnection = dbService.connect();
-      statement = dbConnection.createStatement();
+  private List<User> getUsers(String selectTableSQL) {
+    try(Connection dbConnection = dbService.connect();
+        Statement statement = dbConnection.createStatement()) {
       logger.info("SQL QUERY TEST: " + selectTableSQL);
-
       // execute select SQL stetement
       try (ResultSet rs = statement.executeQuery(selectTableSQL)) {
         return userResultSetToList(rs);
@@ -88,46 +83,19 @@ public class SqlUserDao implements UserDao {
     } catch (SQLException e) {
       logger.error(e.getMessage(), e);
       throw new RuntimeException(e);
-
-    } finally {
-      closeStatement(statement);
-      closeDbConnection(dbConnection);
     }
   }
 
   private List<User> userResultSetToList(ResultSet rs) throws SQLException {
     List<User> allUsers = new ArrayList<>();
     while (rs.next()) {
-
       int userid = rs.getInt(USER_ID);
       String username = rs.getString(USERNAME);
       String password = rs.getString(PASSWORD);
       String email = rs.getString(EMAIL);
 
       allUsers.add(new User(userid, username, password, email));
-
     }
     return allUsers;
   }
-
-  private void closeDbConnection(Connection dbConnection) {
-    if (dbConnection != null) {
-      try {
-        dbConnection.close();
-      } catch (SQLException e) {
-        logger.error(e.getMessage(), e);
-      }
-    }
-  }
-
-  private void closeStatement(Statement statement) {
-    if (statement != null) {
-      try {
-        statement.close();
-      } catch (SQLException e) {
-        logger.error(e.getMessage(), e);
-      }
-    }
-  }
-
 }

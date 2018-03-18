@@ -1,14 +1,15 @@
 package nu.biodela.authentication.session;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.time.temporal.TemporalUnit;
 import java.util.Optional;
 import nu.biodela.time.TimeProvider;
-import nu.biodela.user.User;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,10 +22,10 @@ public class InMemorySessionStoreTest {
   @Mock
   private TimeProvider time;
   private InMemorySessionStore target;
-  private User user = new User("Pello", "password", "");
+  private Long user = 1L;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     target = new InMemorySessionStore(time, 1);
     when(time.now()).thenReturn(Instant.now());
   }
@@ -33,7 +34,7 @@ public class InMemorySessionStoreTest {
   public void getActiveUser() {
     // Given no active user
     // When
-    Optional<User> activeUser = target.getActiveUser("asd-asd-asd-asdasd-asd");
+    Optional<Long> activeUser = target.getActiveUser("asd-asd-asd-asdasd-asd");
     // Then
     assertFalse(activeUser.isPresent());
   }
@@ -41,7 +42,7 @@ public class InMemorySessionStoreTest {
   @Test
   public void createSession() {
     // Given
-    User user2 = new User("Olle", "password", "");
+    Long user2 = 2L;
     // When
     String session1 = target.createSession(user);
     String session2 = target.createSession(user2);
@@ -54,7 +55,7 @@ public class InMemorySessionStoreTest {
     // Given
     String session = target.createSession(user);
     // When
-    Optional<User> activeUser = target.getActiveUser(session);
+    Optional<Long> activeUser = target.getActiveUser(session);
     // Then
     assertTrue(activeUser.isPresent());
     assertEquals(user, activeUser.get());
@@ -66,7 +67,7 @@ public class InMemorySessionStoreTest {
     String session = target.createSession(user);
     // When
     when(time.now()).thenReturn(Instant.now().plus(Duration.ofDays(2)));
-    Optional<User> activeUser = target.getActiveUser(session);
+    Optional<Long> activeUser = target.getActiveUser(session);
     // Then
     assertFalse(activeUser.isPresent());
   }

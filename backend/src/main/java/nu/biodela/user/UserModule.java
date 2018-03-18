@@ -1,15 +1,17 @@
 package nu.biodela.user;
 
+import dagger.Binds;
 import dagger.Module;
 import dagger.Provides;
 import dagger.multibindings.IntoSet;
 import nu.biodela.Service;
 
 @Module
-public class UserModule {
-  @Provides
+public abstract class UserModule {
+  @Binds
   @IntoSet
-  Service providesUserService(UserService impl) {
-    return impl;
-  };
+  abstract Service providesUserService(UserService impl);
+
+  @Binds
+  abstract UserDao providesDao(SqlUserDao impl);
 }

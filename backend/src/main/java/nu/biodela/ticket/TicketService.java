@@ -12,7 +12,6 @@ import javax.inject.Inject;
 import nu.biodela.Service;
 import nu.biodela.authentication.ApiRole;
 import nu.biodela.authentication.session.SessionStore;
-import nu.biodela.user.User;
 
 public class TicketService implements Service {
   private final TicketDao dao;
@@ -35,7 +34,6 @@ public class TicketService implements Service {
 
   void getAllTickets(Context context) {
     Optional<List<Ticket>> tickets = sessionStore.getActiveUser(context)
-        .map(User::getId)
         .map(dao::getAllTickets);
     if (tickets.isPresent()) {
       context
