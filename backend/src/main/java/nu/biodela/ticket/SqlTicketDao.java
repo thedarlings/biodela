@@ -38,6 +38,7 @@ public class SqlTicketDao implements TicketDao {
     return sqlQueryForTickets(selectTableSQL);
   }
 
+
   @Override
   public List<Ticket> getAllTickets() {
     return null;

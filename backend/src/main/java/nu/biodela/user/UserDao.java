@@ -8,8 +8,8 @@ public interface UserDao {
   List<User> findAll();
   Optional<User> findById(long id);
   Optional<User> findByUsername(String username);
-  boolean insertEmployee(User user);
-  boolean updateEmployee(User user);
-  boolean deleteEmployee(User user);
+  boolean insert(User user);
+  boolean update(User user);
+  boolean delete(User user);
 
 }

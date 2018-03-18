@@ -58,17 +58,17 @@ public class SqlUserDao implements UserDao {
   }
 
   @Override
-  public boolean insertEmployee(User user) {
+  public boolean insert(User user) {
     return false;
   }
 
   @Override
-  public boolean updateEmployee(User user) {
+  public boolean update(User user) {
     return false;
   }
 
   @Override
-  public boolean deleteEmployee(User user) {
+  public boolean delete(User user) {
     return false;
   }
 
