@@ -2,6 +2,7 @@ package nu.biodela.authentication.session;
 
 import com.google.auto.factory.AutoFactory;
 import com.google.auto.factory.Provided;
+import io.javalin.Context;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,6 +38,12 @@ public class InMemorySessionStore implements SessionStore {
     } else {
       return Optional.of(session.getUser());
     }
+  }
+
+  @Override
+  public Optional<User> getActiveUser(Context context) {
+    return Optional.ofNullable(context.queryParam("SessionToken"))
+        .flatMap(this::getActiveUser);
   }
 
   @Override

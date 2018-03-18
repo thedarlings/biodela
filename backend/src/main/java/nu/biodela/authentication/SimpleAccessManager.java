@@ -65,20 +65,20 @@ public class SimpleAccessManager implements AccessManager, Service {
         logger.info("Logging in " + user.getUsername());
         String sessionId = sessions.createSession(user);
         context
-            .contentType("json")
+            .contentType("application/json")
             .status(200)
             .result("{\""+ AUTH_TOKEN_PARAM_NAME + "\":\"" + sessionId + "\"}");
       } else {
         logger.info("Got unauthorized login attempt");
         context.status(403)
-            .contentType("json")
+            .contentType("application/json")
             .result(gson.toJson("Unauthorized!"));
       }
     } catch (JsonSyntaxException e) {
       logger.info("Got json syntax error");
       context
           .status(400)
-          .contentType("json")
+          .contentType("application/json")
           .result(gson.toJson("Json syntax error: " + e.getLocalizedMessage()));
     }
   }
