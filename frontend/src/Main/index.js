@@ -44,8 +44,8 @@ class Main extends Component {
         <div className="box add_ticket">
           <AddTicket />
         </div>
-        <div className="box get_ticket"><GetTicket /></div>
-        <div className="box ticket_list"><TicketList  tickets={this.state.tickets} /></div>
+        <div className="box get_ticket"><GetTicket getMyTickets={this.getMyTickets} /></div>
+        <div className="box ticket_list"><TicketList tickets={this.state.tickets} /></div>
       </div>
     )
   }
