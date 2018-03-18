@@ -12,7 +12,7 @@ import nu.biodela.Service;
 import nu.biodela.user.User;
 
 public class SessionService implements Service {
-  private static final String SESSION_TOKEN = "SessionToken";
+  private static final String SESSION_TOKEN = "sessiontoken";
   private final SessionStore sessionStore;
   private final Gson gson;
 

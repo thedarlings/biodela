@@ -41,7 +41,7 @@ public class InMemorySessionStore implements SessionStore {
 
   @Override
   public Optional<User> getActiveUser(Context context) {
-    return Optional.ofNullable(context.queryParam("SessionToken"))
+    return Optional.ofNullable(context.queryParam("sessiontoken"))
         .flatMap(this::getActiveUser);
   }
 

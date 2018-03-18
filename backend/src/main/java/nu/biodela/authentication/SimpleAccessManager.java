@@ -21,7 +21,7 @@ import org.slf4j.Logger;
 
 @Singleton
 public class SimpleAccessManager implements AccessManager, Service {
-  private static final String AUTH_TOKEN_PARAM_NAME = "SessionToken";
+  private static final String AUTH_TOKEN_PARAM_NAME = "sessiontoken";
   private final SessionStore sessions;
   private final Gson gson;
   private final Logger logger;
