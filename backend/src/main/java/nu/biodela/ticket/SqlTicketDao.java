@@ -85,8 +85,8 @@ public class SqlTicketDao implements TicketDao {
       String code = rs.getString(CODE);
       Date expireDate = rs.getDate(EXPIRY_DATE);
       Date entryDate = rs.getDate(CREATED_AT);
-      String provider = rs.getString(PROVIDER);
-      String owner = rs.getString(OWNER_ID);
+      long provider = Long.valueOf(rs.getString(PROVIDER));
+      long owner = Long.valueOf(rs.getString(OWNER_ID));
       Boolean used = rs.getBoolean(USED);
 
       tickets.add(new Ticket(id, code, expireDate, entryDate, provider, owner, used));

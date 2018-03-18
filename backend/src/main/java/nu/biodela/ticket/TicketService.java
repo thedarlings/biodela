@@ -30,9 +30,26 @@ public class TicketService implements Service {
   @Override
   public void setUpRoutes() {
     path("tickets", () -> {
-      get(this::getAllTickets, Role.roles(ApiRole.ANYONE));
+      get(this::getAllTickets, Role.roles(ApiRole.USER));
       post(this::addTicket, Role.roles(ApiRole.USER));
+      get("claim", this::claimTicket, Role.roles(ApiRole.USER));
     });
+  }
+
+  private void claimTicket(Context context) {
+    Optional<Long> optUserId = sessionStore.getActiveUser(context);
+    context.status(200).result(gson.toJson("Non found"));
+    optUserId
+        .flatMap(userId ->
+          dao.getAllTickets().stream()
+          .filter(Ticket::isUnClaimned)
+          .sorted(Ticket::compareExpirationDate)
+          .findFirst())
+        .ifPresent(ticket -> {
+          context.result(gson.toJson(ticket));
+          ticket.setOwner(optUserId.get());
+          dao.update(ticket);
+        });
   }
 
   private void addTicket(Context context) {
