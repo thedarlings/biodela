@@ -43,7 +43,7 @@ public class Main {
   }
 
   public static void main(String[] args) {
-    int port = Optional.ofNullable(System.getProperty("nu.biodela.port"))
+    int port = Optional.ofNullable(System.getenv("PORT"))
         .map(Integer::valueOf)
         .orElse(8080);
     ServerModule serverModule = new ServerModule(
