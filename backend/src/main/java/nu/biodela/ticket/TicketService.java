@@ -38,7 +38,16 @@ public class TicketService implements Service {
       get(this::getAllTickets, Role.roles(ApiRole.USER));
       post(this::addTicket, Role.roles(ApiRole.USER));
       get("claim", this::claimTicket, Role.roles(ApiRole.USER));
+      get("available", this::availableTickets, Role.roles(ApiRole.USER));
     });
+  }
+
+  private void availableTickets(Context context) {
+    final Optional<Integer> optInt = sessionStore.getActiveUser(context).map(dao::nrOfTickets);
+    context.status(500).result("Query failed");
+    optInt.ifPresent(integer -> context.status(200)
+        .contentType("application/json")
+        .result(gson.toJson(optInt.get())));
   }
 
   private void claimTicket(Context context) {
