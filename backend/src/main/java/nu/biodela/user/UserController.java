@@ -3,20 +3,25 @@ package nu.biodela.user;
 import com.google.gson.Gson;
 import io.javalin.Context;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class UserController {
 
   private Gson gson;
   private final List<User> allUsers;
   private final SqlUserDao sqlUserDao;
+  private final Logger logger;
 
   @Inject
   public UserController(Gson gson, SqlUserDao sqlUserDao) {
     this.gson = gson;
     this.sqlUserDao = sqlUserDao;
+    this.logger = LoggerFactory.getLogger(UserController.class.getName());
     allUsers = new ArrayList<>();
     init();
   }
@@ -43,18 +48,30 @@ public class UserController {
   }
 
   public void getUser(Context context) {
+    List<User> users = null;
+    final String param = context.param("id");
+    if (param != null) {
+      users = sqlUserDao.findById(param);
+    }
     final Map<String, String> paramMap = context.paramMap();
-    List<User> users;
-    if (paramMap.containsKey("id")) {
-      String id = paramMap.get("id");
-      users = sqlUserDao.findById(id);
-      context.result(gson.toJson(users));
-    } else if (paramMap.containsKey("username")) {
-      String username = paramMap.get("username");
-      users = sqlUserDao.findByUsername(username);
-      context.result(gson.toJson(users));
-    } else {
-      //fixme context.status() failed user doesn't exist
+    context.result(gson.toJson(users));
+
+    List<String> keys = Arrays.asList("id", "username");
+    for (String key : keys) {
+      if (paramMap.containsKey(key)) {
+        String value = paramMap.get(key);
+        users = (key.equals("id")) ? sqlUserDao.findById(key) : sqlUserDao.findByUsername(key);
+        if (users == null){
+          logger.warn("No users were could be found for " + key + ": " + value);
+          return;
+        }
+        context.result(gson.toJson(users));
+      }
+    }
+
+    if (users == null ) {
+      context.status(400);
+      context.result("Invalid request syntax: no valid parameter to search for user with");
     }
 
   }

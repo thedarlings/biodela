@@ -25,7 +25,7 @@ public class UserService implements Service {
       get(userController::getAllUsers, roles(ApiRole.USER));
       post(userController::createUser, roles(ApiRole.ANYONE));
       path(":id", () -> {
-        get(userController::getUser, roles(ApiRole.USER));
+        get(userController::getUser, roles(ApiRole.ANYONE));
         patch(userController::updateUser, roles(ApiRole.USER));
         delete(userController::deleteUser, roles(ApiRole.USER));
       });

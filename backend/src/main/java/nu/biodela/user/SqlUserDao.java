@@ -5,7 +5,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javax.inject.Inject;
 import nu.biodela.db.DbService;
@@ -92,12 +91,56 @@ public class SqlUserDao implements UserDao {
 
   @Override
   public List<User> findById(String id) {
-    return Collections.emptyList();
+    Connection dbConnection = null;
+    Statement statement = null;
+
+    String selectTableSQL = String.format("SELECT * from users WHERE %s=%s", USER_ID, id);
+
+    try {
+      dbConnection = dbService.connect();
+      statement = dbConnection.createStatement();
+      logger.info("SQL QUERY TEST: " + selectTableSQL);
+
+      // execute select SQL stetement
+      try (ResultSet rs = statement.executeQuery(selectTableSQL)) {
+        return userResultSetToList(rs);
+      }
+
+    } catch (SQLException e) {
+      logger.error(e.getMessage(), e);
+      throw new RuntimeException(e);
+
+    } finally {
+      closeStatement(statement);
+      closeDbConnection(dbConnection);
+    }
   }
 
   @Override
   public List<User> findByUsername(String username) {
-    return Collections.emptyList();
+    Connection dbConnection = null;
+    Statement statement = null;
+
+    String selectTableSQL = String.format("SELECT * from users WHERE %s=%s", USERNAME, username);
+
+    try {
+      dbConnection = dbService.connect();
+      statement = dbConnection.createStatement();
+      logger.info("SQL QUERY TEST: " + selectTableSQL);
+
+      // execute select SQL stetement
+      try (ResultSet rs = statement.executeQuery(selectTableSQL)) {
+        return userResultSetToList(rs);
+      }
+
+    } catch (SQLException e) {
+      logger.error(e.getMessage(), e);
+      throw new RuntimeException(e);
+
+    } finally {
+      closeStatement(statement);
+      closeDbConnection(dbConnection);
+    }
   }
 
   @Override
