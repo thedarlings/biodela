@@ -86,10 +86,10 @@ public class SimpleAccessManager implements AccessManager, Service {
   }
 
   private static class SessionResult {
-    private String SessionToken;
+    private String sessiontoken;
     private long id;
     private SessionResult(String sessionToken, long id) {
-      SessionToken = sessionToken;
+      sessiontoken = sessionToken;
       this.id = id;
     }
   }
