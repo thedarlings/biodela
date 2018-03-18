@@ -45,9 +45,11 @@ public class TicketService implements Service {
   private void availableTickets(Context context) {
     final Optional<Integer> optInt = sessionStore.getActiveUser(context).map(dao::nrOfTickets);
     context.status(500).result("Query failed");
-    optInt.ifPresent(integer -> context.status(200)
-        .contentType("application/json")
-        .result(gson.toJson(optInt.get())));
+    optInt.ifPresent(integer ->
+        context
+            .status(200)
+            .contentType("application/json")
+            .result(gson.toJson(integer)));
   }
 
   private void claimTicket(Context context) {

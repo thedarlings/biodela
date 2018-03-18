@@ -133,4 +133,30 @@ public class SqlTicketDao implements TicketDao {
     return tickets;
   }
 
+  @Override
+  public int nrOfTickets(long userId) {
+    String providedSql = "select ticket_id, user_id from tickets where provider=" + userId;
+    String ownedSql = "select ticket_id, user_id from tickets where user_id = " + userId;
+
+    String sql = "SELECT COUNT(provided) - COUNT(owned) as available " +
+        "FROM (" + providedSql + ") as provided " +
+        "FULL JOIN (" + ownedSql + ") AS owned " +
+        "ON provided.ticket_id = owned.ticket_id";
+
+    try (Connection dbConnection = dbService.connect();
+         Statement statement = dbConnection.createStatement()){
+      logger.info("SQL QUERY: " + sql);
+
+      // execute select SQL stetement
+      try (ResultSet rs = statement.executeQuery(sql)) {
+        rs.next();
+        return rs.getInt("available");
+      }
+
+    } catch (SQLException e) {
+      logger.error(e.getMessage(), e);
+      return 0;
+    }
+  }
+
 }
