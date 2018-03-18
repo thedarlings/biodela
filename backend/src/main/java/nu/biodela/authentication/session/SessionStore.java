@@ -8,4 +8,5 @@ public interface SessionStore {
   Optional<User> getActiveUser(String sessionToken);
   Optional<User> getActiveUser(Context sessionToken);
   String createSession(User user);
+  boolean dropSession(String sessionToken);
 }

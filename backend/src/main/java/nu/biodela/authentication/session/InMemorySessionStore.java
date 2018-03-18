@@ -56,6 +56,12 @@ public class InMemorySessionStore implements SessionStore {
     return sessionId;
   }
 
+  @Override
+  public boolean dropSession(String sessionToken) {
+    Session removed = sessions.remove(sessionToken);
+    return (removed != null);
+  }
+
 
   private class Session {
     private final String sessionId;

@@ -26,8 +26,18 @@ public class SessionService implements Service {
   public void setUpRoutes() {
     path("auth/sessiontoken/:" + SESSION_TOKEN, () -> {
       get(this::getSession);
-      //delete(this::remoteSession);
+      delete(this::removeSession);
     });
+  }
+
+  private void removeSession(Context context) {
+    String sessionToken = context.param(SESSION_TOKEN);
+    boolean success = sessionStore.dropSession(sessionToken);
+    if (success) {
+      context.status(200).result("Deleted");
+    } else {
+      context.status(400).result("Not found");
+    }
   }
 
   private void getSession(Context context) {
