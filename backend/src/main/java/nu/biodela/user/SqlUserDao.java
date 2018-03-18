@@ -36,6 +36,7 @@ public class SqlUserDao implements UserDao {
 
   @Override
   public Optional<User> findById(long id) {
+
     String selectTableSQL = String.format("SELECT * from users WHERE %s=%s", USER_ID, id);
     List<User> users = getUsers(selectTableSQL);
     if (users.isEmpty()) {
@@ -74,7 +75,7 @@ public class SqlUserDao implements UserDao {
   private List<User> getUsers(String selectTableSQL) {
     try(Connection dbConnection = dbService.connect();
         Statement statement = dbConnection.createStatement()) {
-      logger.info("SQL QUERY TEST: " + selectTableSQL);
+      logger.debug("SQL QUERY: " + selectTableSQL);
       // execute select SQL stetement
       try (ResultSet rs = statement.executeQuery(selectTableSQL)) {
         return userResultSetToList(rs);
@@ -89,12 +90,12 @@ public class SqlUserDao implements UserDao {
   private List<User> userResultSetToList(ResultSet rs) throws SQLException {
     List<User> allUsers = new ArrayList<>();
     while (rs.next()) {
-      int userid = rs.getInt(USER_ID);
+      int userId = rs.getInt(USER_ID);
       String username = rs.getString(USERNAME);
       String password = rs.getString(PASSWORD);
       String email = rs.getString(EMAIL);
 
-      allUsers.add(new User(userid, username, password, email));
+      allUsers.add(new User(userId, username, password, email));
     }
     return allUsers;
   }

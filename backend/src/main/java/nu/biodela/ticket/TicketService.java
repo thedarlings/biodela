@@ -2,10 +2,12 @@ package nu.biodela.ticket;
 
 import static io.javalin.ApiBuilder.get;
 import static io.javalin.ApiBuilder.path;
+import static io.javalin.ApiBuilder.post;
 
 import com.google.gson.Gson;
 import io.javalin.Context;
 import io.javalin.security.Role;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import javax.inject.Inject;
@@ -28,18 +30,23 @@ public class TicketService implements Service {
   @Override
   public void setUpRoutes() {
     path("tickets", () -> {
-      get(this::getAllTickets, Role.roles(ApiRole.USER));
+      get(this::getAllTickets, Role.roles(ApiRole.ANYONE));
+      post(this::addTicket, Role.roles(ApiRole.USER));
     });
   }
 
-  void getAllTickets(Context context) {
+  private void addTicket(Context context) {
+    final Optional<Long> userId = sessionStore.getActiveUser(context);
+
+  }
+
+  private void getAllTickets(Context context) {
     Optional<List<Ticket>> tickets = sessionStore.getActiveUser(context)
         .map(dao::getAllTickets);
-    if (tickets.isPresent()) {
-      context
-          .status(200)
+    context.status(200)
           .contentType("application/json")
-          .result(gson.toJson(tickets));
-    }
+          .result(gson.toJson(Collections.emptyList()));
+    tickets.ifPresent(tickets1 -> context
+        .result(gson.toJson(tickets1)));
   }
 }
