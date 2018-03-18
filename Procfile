@@ -1,1 +1,1 @@
-web: backend/build/install/backend/bin/backend
+web: backend/build/install/backend/bin/backend -Dnu.biodela.port=$PORT
