@@ -27,17 +27,20 @@ public class SimpleAccessManager implements AccessManager, Service {
   private final UserDao userDao;
   private final Gson gson;
   private final Logger logger;
+  private final PasswordAuthenticator passwordAuthenticator;
 
   @Inject
   public SimpleAccessManager(
       SessionStore sessions,
       UserDao userDao,
       Gson gson,
-      ILoggerFactory loggerFactory) {
+      ILoggerFactory loggerFactory,
+      PasswordAuthenticator passwordAuthenticator) {
     this.sessions = sessions;
     this.userDao = userDao;
     this.gson = gson;
     this.logger = loggerFactory.getLogger(SimpleAccessManager.class.getName());
+    this.passwordAuthenticator = passwordAuthenticator;
   }
 
   @Override
@@ -56,9 +59,10 @@ public class SimpleAccessManager implements AccessManager, Service {
         .flatMap(userDao::findById);
   }
 
-  private Optional<User> authenticateUser(LoginJson loginCredentials) {
-    //TODO: Add authentication
-    return userDao.findByUsername(loginCredentials.username);
+  private Optional<User> getAuthenticatedUser(LoginJson loginCredentials) {
+    return userDao.findByUsername(loginCredentials.username)
+        .filter(user ->
+            passwordAuthenticator.authenticate(loginCredentials.password, user.getPassword()));
   }
 
   @Override
@@ -71,7 +75,7 @@ public class SimpleAccessManager implements AccessManager, Service {
   private void onLoginRequest(Context context) {
     try {
       LoginJson payLoad = gson.fromJson(context.body(), LoginJson.class);
-      Optional<User> authenticatedUser = authenticateUser(payLoad);
+      Optional<User> authenticatedUser = getAuthenticatedUser(payLoad);
       if (authenticatedUser.isPresent()) {
         User user = authenticatedUser.get();
         logger.info("Logging in " + user.getUsername());
