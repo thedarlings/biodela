@@ -6,23 +6,33 @@ import dagger.Provides;
 @Module
 public class DbModule {
 
-  private final String DBMS;
-  private final String DB_SERVER_NAME;
-  private final String DB_PORT_NUMBER;
-  private final String DB_NAME;
+  private final String dbms;
+  private final String dbServerName;
+  private final String dbPort;
+  private final String dbPath;
+  private final String username;
+  private final String password;
 
 
-  public DbModule(String dbms, String db_server_name, String db_port_number,
-      String db_name) {
-    DBMS = dbms;
-    DB_SERVER_NAME = db_server_name;
-    DB_PORT_NUMBER = db_port_number;
-    DB_NAME = db_name;
+  public DbModule(String dbms, String dbServerName, String dbPort,
+                  String dbPath, String username, String password) {
+    this.dbms = dbms;
+    this.dbServerName = dbServerName;
+    this.dbPort = dbPort;
+    this.dbPath = dbPath;
+    this.username = username;
+    this.password = password;
   }
 
   @Provides
-  DbService providesDbService() {
-    return new DbService("postgres", "", DBMS, DB_SERVER_NAME, DB_PORT_NUMBER, DB_NAME);
+  DbService providesDbService(DbServiceFactory factory) {
+    return factory.create(
+        username,
+        password,
+        dbms,
+        dbServerName,
+        dbPort,
+        dbPath);
   }
 
 
