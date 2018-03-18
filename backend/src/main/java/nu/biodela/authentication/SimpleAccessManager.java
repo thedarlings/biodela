@@ -67,7 +67,7 @@ public class SimpleAccessManager implements AccessManager, Service {
         context
             .contentType("json")
             .status(200)
-            .result("\"{\""+ AUTH_TOKEN_PARAM_NAME + "\":\"" + sessionId + "\"}\"");
+            .result("{\""+ AUTH_TOKEN_PARAM_NAME + "\":\"" + sessionId + "\"}");
       } else {
         logger.info("Got unauthorized login attempt");
         context.status(403)
