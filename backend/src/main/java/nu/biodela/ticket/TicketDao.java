@@ -7,4 +7,5 @@ public interface TicketDao {
   List<Ticket> getAllTickets();
   boolean update(Ticket ticket);
   boolean insert(Ticket ticket);
+  int nrOfTickets(long userId);
 }
