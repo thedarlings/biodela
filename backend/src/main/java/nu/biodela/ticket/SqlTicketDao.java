@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -62,6 +63,7 @@ public class SqlTicketDao implements TicketDao {
 
   @Override
   public boolean insert(Ticket ticket) {
+    SimpleDateFormat dt = new SimpleDateFormat("yyyy-mm-dd");
     String sql = "INSERT into tickets (" +
         PROVIDER + ", " +
         CODE + ", " +
@@ -74,7 +76,7 @@ public class SqlTicketDao implements TicketDao {
         " VALUES(" +
         ticket.getProvider() + ", " +
         "\'" + ticket.getCode() + "\', " +
-        "\'" + ticket.getExpiryDate() + "\'";
+        "\'" + dt.format(ticket.getExpiryDate()) + "\'";
 
     if (ticket.getOwnerId().isPresent()) {
       sql += ", " + ticket.getOwnerId().get();
