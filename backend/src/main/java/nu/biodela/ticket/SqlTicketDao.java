@@ -10,8 +10,8 @@ import java.util.Date;
 import java.util.List;
 import javax.inject.Inject;
 import nu.biodela.db.DbService;
+import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class SqlTicketDao implements TicketDao {
 
@@ -26,9 +26,9 @@ public class SqlTicketDao implements TicketDao {
   private final Logger logger;
 
   @Inject
-  SqlTicketDao(DbService dbService) {
+  SqlTicketDao(DbService dbService, ILoggerFactory loggerFactory) {
     this.dbService = dbService;
-    this.logger = LoggerFactory.getLogger(SqlTicketDao.class);
+    this.logger = loggerFactory.getLogger(SqlTicketDao.class.getName());
   }
 
   @Override
@@ -48,16 +48,18 @@ public class SqlTicketDao implements TicketDao {
   public boolean update(Ticket ticket) {
 
     String sql = "UPDATE tickets SET " +
-        TICKET_ID + "=" + ticket.getTicketId() +
-        CODE + "=" + ticket.getCode() +
-        EXPIRY_DATE + "=" + ticket.getExpiryDate() +
-        CREATED_AT + "=" + ticket.getCreatedAt() +
-        PROVIDER + "=" + ticket.getProvider() +
-        OWNER_ID + "=" + ticket.getOwnerId();
+        CODE + "=\'" + ticket.getCode() + "\', " +
+        EXPIRY_DATE + "=\'" + ticket.getExpiryDate() + "\', " +
+        PROVIDER + "=" + ticket.getProvider();
+    if (ticket.getOwnerId().isPresent()) {
+        sql += ", " + OWNER_ID + "=" + ticket.getOwnerId().get();
+    }
 
+    sql += " WHERE " + TICKET_ID + "=" + ticket.getTicketId();
 
     try (Connection dbConnection = dbService.connect();
         Statement statement = dbConnection.createStatement()) {
+      logger.info("Running SQL query: " + sql);
       statement.executeUpdate(sql);
       return true;
     } catch (SQLException e) {
@@ -98,10 +100,11 @@ public class SqlTicketDao implements TicketDao {
       Date expireDate = rs.getDate(EXPIRY_DATE);
       Date entryDate = rs.getDate(CREATED_AT);
       long provider = Long.valueOf(rs.getString(PROVIDER));
-      long owner = Long.valueOf(rs.getString(OWNER_ID));
+      String owner = rs.getString(OWNER_ID);
+      Long ownerId = owner != null? Long.valueOf(owner) : null;
       Boolean used = rs.getBoolean(USED);
 
-      tickets.add(new Ticket(id, code, expireDate, entryDate, provider, owner, used));
+      tickets.add(new Ticket(id, code, expireDate, entryDate, provider, ownerId, used));
 
     }
     return tickets;

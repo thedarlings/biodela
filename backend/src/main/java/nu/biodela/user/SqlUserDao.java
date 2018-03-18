@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Optional;
 import javax.inject.Inject;
 import nu.biodela.db.DbService;
+import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class SqlUserDao implements UserDao {
 
@@ -22,9 +22,9 @@ public class SqlUserDao implements UserDao {
   private final Logger logger;
 
   @Inject
-  public SqlUserDao(DbService dbService) {
+  public SqlUserDao(DbService dbService, ILoggerFactory loggerFactory) {
     this.dbService = dbService;
-    this.logger = LoggerFactory.getLogger(SqlUserDao.class);
+    this.logger = loggerFactory.getLogger(SqlUserDao.class.getName());
   }
 
 

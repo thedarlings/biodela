@@ -13,7 +13,7 @@ public class Ticket {
   private boolean used;
 
   public Ticket(long ticketId, String code, Date expiryDate, Date createdAt, long provider,
-      long ownerId, boolean used) {
+      Long ownerId, boolean used) {
     this.ticketId = ticketId;
     this.code = code;
     this.expiryDate = expiryDate;
