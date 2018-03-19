@@ -9,7 +9,7 @@ class Login extends Component {
   }
 
   login() {
-    fetch('http://192.168.0.9:8080/api/auth', {
+    fetch('https://biodela.herokuapp.com/api/auth', {
       body: JSON.stringify({ username: this.state.username, password: this.state.password }),
       method: 'POST',
       mode: 'cors',

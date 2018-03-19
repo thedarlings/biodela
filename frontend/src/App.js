@@ -24,7 +24,7 @@ class App extends Component {
   }
 
   logout() {
-    fetch('http://192.168.0.9:8080/api/auth/sessiontoken/' + localStorage.sessiontoken, {
+    fetch('https://biodela.herokuapp.com/api/auth/sessiontoken/' + localStorage.sessiontoken, {
       method: 'DELETE',
       mode: 'cors',
       headers: new Headers({

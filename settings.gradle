@@ -1,2 +1,4 @@
 rootProject.name = 'biodela'
+
 include 'backend'
+include 'frontend'
