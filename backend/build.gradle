@@ -29,7 +29,6 @@ dependencies {
     compile 'io.javalin:javalin:1.4.1'
     compile 'com.google.dagger:dagger:2.14.1'
     compile 'com.google.code.gson:gson:2.8.2'
-// https://mvnrepository.com/artifact/org.postgresql/postgresql
     compile group: 'org.postgresql', name: 'postgresql', version: '9.4.1212'
     runtime 'org.slf4j:slf4j-log4j12:1.7.25'
     apt 'com.google.auto.factory:auto-factory:1.0-beta4'

@@ -1,0 +1,20 @@
+language: java
+services:
+  - postgresql
+
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+
+before_script:
+  - ./backend/e2e/setup_db.sh
+
+install: ./gradlew yarn assemble
+
+script:
+  - ./gradlew check
+  - ./backend/e2e/e2e_test.sh
