@@ -23,7 +23,7 @@ class GetTicket extends Component {
       return response.text();
     })
     .then(data => {
-      this.setState({ numberOfTickets: parseInt(data) });
+      this.setState({ numberOfTickets: parseInt(data, 10) });
     })
   }
 
