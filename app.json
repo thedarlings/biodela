@@ -1,0 +1,27 @@
+{
+  "name": "biodela",
+  "scripts": {
+    "postdeploy": "backend/e2e/setup_db.sh"
+  },
+  "env": {
+    "APP_BASE": {
+      "required": true
+    },
+    "GRADLE_TASK": {
+      "required": true
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1
+    }
+  },
+  "addons": [
+    "heroku-postgresql"
+  ],
+  "buildpacks": [
+    {
+      "url": "heroku/gradle"
+    }
+  ]
+}
