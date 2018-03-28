@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import './style.css';
+import { addTicket } from '../../actions/ticketActions';
 
 class GetTicket extends Component {
   constructor(props) {
@@ -39,6 +41,7 @@ class GetTicket extends Component {
       return response.json();
     })
     .then(data => {
+      this.props.dispatch(addTicket(data.id, data.code, data.expiryDate));
       this.props.getMyTickets()
       this.getNumberOfTickets();
     })
@@ -63,4 +66,10 @@ class GetTicket extends Component {
   }
 }
 
-export default GetTicket;
+
+const mapStateToProps = state => ({
+  tickets: state.tickets
+})
+
+export default connect(mapStateToProps)(GetTicket);
+

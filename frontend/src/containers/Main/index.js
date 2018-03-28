@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import './style.css';
 import AddTicket from '../AddTicket';
 import GetTicket from '../GetTicket';
 import TicketList from '../TicketList';
+import { receivedTicket } from '../../actions/ticketActions';
 
 class Main extends Component {
   constructor(props) {
     super(props);
     this.getMyTickets = this.getMyTickets.bind(this);
-    this.state = { tickets: [] };
+    //this.state = { tickets: [] };
   }
 
   getMyTickets() {
@@ -22,7 +24,7 @@ class Main extends Component {
     .then(response => {
       if (response.status === 200) {
         response.json().then(data => {
-          this.setState({ tickets: data });
+          this.props.dispatch(receivedTicket(data));
         })
       }
     })
@@ -45,10 +47,15 @@ class Main extends Component {
           <AddTicket />
         </div>
         <div className="box get_ticket"><GetTicket getMyTickets={this.getMyTickets} /></div>
-        <div className="box ticket_list"><TicketList tickets={this.state.tickets} /></div>
+        <div className="box ticket_list"><TicketList tickets={this.props.tickets} /></div>
       </div>
     )
   }
 }
 
-export default Main;
+
+const mapStateToProps = state => ({
+  tickets: state.tickets
+})
+
+export default connect(mapStateToProps)(Main);

@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import './App.css';
-import './general.css'
-import Login from './Login'
-import Main from './Main'
+import './general.css';
+import Login from './containers/Login';
+import Main from './containers/Main';
+
 
 class App extends Component {
   constructor(props) {
@@ -17,7 +18,6 @@ class App extends Component {
   }
 
   authenticate() {
-    //setTimeout(() => this.setState({pending: false}), 500);
     let token = localStorage.sessiontoken;
     let loggedIn = token && token.length > 0 ? true : false;
     this.setState({ loggedIn })
@@ -38,6 +38,8 @@ class App extends Component {
     })
     
   }
+
+
 
   render() {
     if (this.state.pending) return <div>Pending...</div>
