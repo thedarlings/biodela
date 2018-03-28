@@ -12,7 +12,7 @@ class GetTicket extends Component {
   }
 
   getNumberOfTickets() {
-    fetch('https://biodela.herokuapp.com/api/tickets/available?sessiontoken=' + localStorage.sessiontoken, {
+    fetch('/api/tickets/available?sessiontoken=' + localStorage.sessiontoken, {
       method: 'GET',
       mode: 'cors',
       headers: new Headers({
@@ -28,7 +28,7 @@ class GetTicket extends Component {
   }
 
   getTicket() {
-    fetch('https://biodela.herokuapp.com/api/tickets/claim?sessiontoken=' + localStorage.sessiontoken, {
+    fetch('/api/tickets/claim?sessiontoken=' + localStorage.sessiontoken, {
       method: 'GET',
       mode: 'cors',
       headers: new Headers({
