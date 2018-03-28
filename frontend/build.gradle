@@ -9,6 +9,16 @@ node {
     download = true
 }
 
-task build(type: YarnTask, dependsOn: ['yarnSetup']) {
+task build(type: YarnTask, dependsOn: ['yarn']) {
     args = ['build']
+    inputs.dir(project.file("./src"))
+    inputs.dir(project.file("./node_modules"))
+    outputs.dir(project.buildDir)
+}
+
+task clean {
+    destroyables.register project.buildDir
+    doLast {
+        delete project.buildDir
+    }
 }
