@@ -8,7 +8,7 @@ class AddTicket extends Component {
   }
 
   addTicket() {
-    fetch('https://biodela.herokuapp.com/api/tickets?sessiontoken=' + localStorage.sessiontoken, {
+    fetch('/api/tickets?sessiontoken=' + localStorage.sessiontoken, {
       body: JSON.stringify({ code: this.state.code, expiryDate: this.state.date.toString() }),
       method: 'POST',
       mode: 'cors',

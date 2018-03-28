@@ -12,7 +12,7 @@ class Main extends Component {
   }
 
   getMyTickets() {
-    fetch("https://biodela.herokuapp.com/api/tickets?sessiontoken=" + localStorage.sessiontoken, {
+    fetch("/api/tickets?sessiontoken=" + localStorage.sessiontoken, {
       method: "GET",
       mode: 'cors',
       headers: new Headers({
