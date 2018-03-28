@@ -38,6 +38,11 @@ TOKEN=${TOKEN%\"}
 
 # We have a active session
 curl -s localhost:8080/api/auth/sessiontoken/${TOKEN} | grep -q "\"username\":\"admin\""
+# We do not return the password hash
+! curl -s localhost:8080/api/auth/sessiontoken/${TOKEN} | grep -q "\"password\":"
+
+# We can not see password hashes
+$(! curl -s "localhost:8080/api/users?sessiontoken=${TOKEN}" | grep -q "\"password\":")
 
 # We can logout
 curl -sX DELETE localhost:8080/api/auth/sessiontoken/${TOKEN} | grep -q "Deleted"
