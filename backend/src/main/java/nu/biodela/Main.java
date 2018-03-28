@@ -69,7 +69,7 @@ public class Main {
       dbUsername = dbUri.getUserInfo().split(":")[0];
       dbPassword = dbUri.getUserInfo().split(":")[1];
     } else {
-      dbUri = new URI("postgres://192.168.0.9:5432/biodela");
+      dbUri = new URI("postgres://localhost:5432/biodela");
       dbUsername = "postgres";
       dbPassword = "";
     }
