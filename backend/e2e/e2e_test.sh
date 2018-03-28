@@ -6,12 +6,25 @@ cd ${DIR}/..
 PROCESS_ID=$(../gradlew run 2> ${DIR}/log.tmp > ${DIR}/log.tmp & echo $!)
 
 function finish {
+    if [ $? -ne 0 ]; then
+        STATUS="FAIL"
+    else
+        STATUS="SUCCESS"
+    fi
+
     echo "Killing process"
     echo "--------------SERVER LOG----------------"
     cat ${DIR}/log.tmp
     rm ${DIR}/log.tmp
     cd ${OLD_PWD}
     kill ${PROCESS_ID}
+    echo "" # New line
+    echo "----------------RESULT-------------------"
+    if [ "${STATUS}" == "FAIL" ]; then
+        echo "Test Failed! 😱"
+    else
+        echo "Test Passed! 👌"
+    fi
 }
 trap finish EXIT
 
