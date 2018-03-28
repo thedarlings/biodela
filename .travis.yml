@@ -13,8 +13,6 @@ cache:
 before_script:
   - ./backend/e2e/setup_db.sh
 
-install: ./gradlew yarn assemble
-
 script:
   - ./gradlew check
   - ./backend/e2e/e2e_test.sh
