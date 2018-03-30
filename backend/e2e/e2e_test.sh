@@ -55,7 +55,17 @@ curl -s localhost:8080/api/auth/sessiontoken/${TOKEN} | grep -q "\"username\":\"
 ! curl -s localhost:8080/api/auth/sessiontoken/${TOKEN} | grep -q "\"password\":"
 
 # We can not see password hashes
-$(! curl -s "localhost:8080/api/users?sessiontoken=${TOKEN}" | grep -q "\"password\":")
+! curl -s "localhost:8080/api/users?sessiontoken=${TOKEN}" | grep -q "\"password\":"
+
+# We can upload a ticket
+YEAR=$(date +%Y)
+NEXT_YEAR=$(($YEAR + 1))
+NEW_TICKET="{\"code\":\"987654321\",\"expiryDate\":\"${NEXT_YEAR}-12-01\"}"
+curl -sX POST "localhost:8080/api/tickets?sessiontoken=${TOKEN}" -d ${NEW_TICKET}
+
+#We can not upload an old ticket
+OLD_TICKET='{"code":"123456789","expiryDate":"2015-01-01"}'
+! curl -sX POST "localhost:8080/api/tickets?sessiontoken=${TOKEN}" -d ${OLD_TICKET}
 
 # We can logout
 curl -sX DELETE localhost:8080/api/auth/sessiontoken/${TOKEN} | grep -q "Deleted"
