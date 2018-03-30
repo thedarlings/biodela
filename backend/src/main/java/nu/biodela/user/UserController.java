@@ -19,6 +19,7 @@ public class UserController {
 
   public void getAllUsers(Context context) {
     final List<User> all = userDao.findAll();
+    all.forEach(User::dropPassword);
     String json = gson.toJson(all);
     context.status(200);
     context.result(json);
