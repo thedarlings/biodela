@@ -18,8 +18,9 @@ repositories {
 }
 
 processResources {
-    dependsOn(':frontend:build')
-    from(rootProject.project(':frontend').buildDir) {into 'public'}
+    def frontendBuildTask = tasks.findByPath(":frontend:build")
+    dependsOn(frontendBuildTask)
+    from(frontendBuildTask.outputs) {into 'public'}
 }
 
 dependencies {
