@@ -11,10 +11,13 @@ import io.javalin.security.Role;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import javax.inject.Inject;
 import nu.biodela.Service;
 import nu.biodela.authentication.ApiRole;
 import nu.biodela.authentication.session.SessionStore;
+import nu.biodela.validation.ValidationException;
+import nu.biodela.validation.Validator;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 
@@ -23,13 +26,20 @@ public class TicketService implements Service {
   private final SessionStore sessionStore;
   private final Gson gson;
   private Logger logger;
+  private Set<Validator<Ticket>> ticketValidators;
 
   @Inject
-  TicketService(TicketDao dao, SessionStore sessionStore, Gson gson, ILoggerFactory loggerFactory) {
+  TicketService(
+      TicketDao dao,
+      SessionStore sessionStore,
+      Gson gson,
+      ILoggerFactory loggerFactory,
+      Set<Validator<Ticket>> ticketValidators) {
     this.dao = dao;
     this.sessionStore = sessionStore;
     this.gson = gson;
     this.logger = loggerFactory.getLogger(TicketService.class.getName());
+    this.ticketValidators = ticketValidators;
   }
 
   @Override
@@ -72,6 +82,7 @@ public class TicketService implements Service {
     Optional<Long> userId = sessionStore.getActiveUser(context);
     try {
       Ticket ticket = gson.fromJson(context.body(), Ticket.class);
+      validate(ticket);
       userId.ifPresent(id -> {
         ticket.setProvider(id);
         dao.insert(ticket);
@@ -80,6 +91,17 @@ public class TicketService implements Service {
     } catch (JsonSyntaxException e) {
       logger.info("Malformed json: " + e.getLocalizedMessage());
       context.status(400);
+    } catch (ValidationException e) {
+      logger.info("Got invalid ticket! " +
+          "Validation error: " + e.getLocalizedMessage());
+      context.result(e.getLocalizedMessage());
+      context.status(403);
+    }
+  }
+
+  private void validate(Ticket ticket) throws ValidationException {
+    for (Validator<Ticket> validator : ticketValidators) {
+      validator.validate(ticket);
     }
   }
 
