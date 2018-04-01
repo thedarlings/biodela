@@ -19,8 +19,20 @@ class App extends Component {
 
   authenticate() {
     let token = localStorage.sessiontoken;
-    let loggedIn = token && token.length > 0 ? true : false;
-    this.setState({ loggedIn })
+    if (token && token.length > 0) {
+      fetch('/api/auth/sessiontoken/' + token, {
+        method: 'GET',
+        mode: 'cors',
+        headers: new Headers({
+          'Content-Type': 'text/plain'
+        })
+      }).then(response => {
+        console.log(response)
+        if (response.status === 200) {
+          this.setState({ loggedIn: true })
+        }
+      })
+    }
   }
 
   logout() {
